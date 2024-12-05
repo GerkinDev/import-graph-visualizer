@@ -3,6 +3,7 @@ import { Module, ModuleDeps, ModuleImportMap } from './types';
 
 export function parseModuleDeps(result: ICruiseResult): ModuleDeps {
   const localModules = new Set<string>();
+  const nodeBuiltInModules = new Set<string>();
   const aliases = new Map<string, string>();
   const npmPackageNames = new Map<string, string>();
   const sourceDeps = new Map<
@@ -32,6 +33,9 @@ export function parseModuleDeps(result: ICruiseResult): ModuleDeps {
       if (dependency.dependencyTypes.includes('local')) {
         localModules.add(dependency.resolved);
       }
+      if (dependency.dependencyTypes.includes('core')) {
+        nodeBuiltInModules.add(dependency.resolved);
+      }
       if (dependency.dependencyTypes.includes('aliased')) {
         aliases.set(dependency.resolved, dependency.module);
         localModules.add(dependency.resolved);
@@ -48,10 +52,12 @@ export function parseModuleDeps(result: ICruiseResult): ModuleDeps {
       const npmPackageName = npmPackageNames.get(module.source);
       const alias = aliases.get(module.source);
       const isLocal = localModules.has(module.source);
+      const isNodeBuiltIn = nodeBuiltInModules.has(module.source);
       return {
         path: npmPackageName ?? module.source,
         source: module.source,
         isLocal,
+        isNodeBuiltIn,
         ...(alias && { alias }),
       };
     })
