@@ -6,14 +6,22 @@ type Args = {
   moduleDeps: ModuleDeps;
   sourceModules: string[];
   targetModules: string[];
+  ignoredModules: string[];
 };
 
 ctx.addEventListener('message', (ev: MessageEvent<Args>) => {
   ctx.postMessage(createDepGraph(ev.data));
 });
 
+const notNil = <T>(value: T): value is NonNullable<T> => value != undefined;
+
 function createDepGraph(args: Args): DepGraph {
-  const { moduleDeps, sourceModules, targetModules } = args;
+  const { moduleDeps, sourceModules, targetModules, ignoredModules } = args;
+  moduleDeps.modules = Object.fromEntries(
+    Object.entries(moduleDeps.modules).filter(
+      ([path, module]) => !ignoredModules.includes(module.path),
+    ),
+  );
 
   if (sourceModules.length === 0) {
     const { vertices, edges } = bfs(
@@ -21,7 +29,9 @@ function createDepGraph(args: Args): DepGraph {
       module => moduleDeps.importedBy[module]?.map(({ path }) => path) ?? [],
     );
     return {
-      modules: vertices.map(module => moduleDeps.modules[module]),
+      modules: vertices
+        .map(module => moduleDeps.modules[module])
+        .filter(notNil),
       imports: edges.map(({ from, to }) => ({
         fromPath: from,
         toPath: to,
@@ -38,7 +48,9 @@ function createDepGraph(args: Args): DepGraph {
       module => moduleDeps.deps[module]?.map(({ path }) => path) ?? [],
     );
     return {
-      modules: vertices.map(module => moduleDeps.modules[module]),
+      modules: vertices
+        .map(module => moduleDeps.modules[module])
+        .filter(notNil),
       imports: edges.map(({ from, to }) => ({
         fromPath: from,
         toPath: to,
@@ -63,9 +75,9 @@ function createDepGraph(args: Args): DepGraph {
   });
 
   return {
-    modules: Array.from(relevantModules).map(
-      module => moduleDeps.modules[module],
-    ),
+    modules: Array.from(relevantModules)
+      .map(module => moduleDeps.modules[module])
+      .filter(notNil),
     imports: Array.from(relevantModules).reduce<DepGraph['imports']>(
       (acc, module) => [
         ...acc,

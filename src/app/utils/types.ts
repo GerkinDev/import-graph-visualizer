@@ -30,4 +30,5 @@ export type DepGraph = {
 export type Filters = {
   targetModules: string[];
   sourceModules: string[];
+  ignoredModules: string[];
 };
