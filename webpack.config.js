@@ -10,7 +10,10 @@ module.exports = {
     path: path.resolve(__dirname, 'dist/app'),
     clean: true,
   },
-  devtool: 'inline-source-map',
+  cache: {
+    type: 'filesystem',
+  },
+  devtool: 'cheap-source-map',
   module: {
     rules: [
       {
@@ -21,6 +24,7 @@ module.exports = {
       {
         test: /\.worker\.js/,
         use: { loader: 'worker-loader' },
+        exclude: /node_modules/,
       },
     ],
   },
