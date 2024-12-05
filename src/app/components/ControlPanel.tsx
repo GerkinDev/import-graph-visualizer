@@ -11,6 +11,7 @@ import React, { FC, useMemo, useState } from 'react';
 import { getModules } from '../utils/deps';
 import { Filters, Module, ModuleDeps } from '../utils/types';
 import SelectModules from './SelectModules';
+import IgnoreModules from './IgnoreModules';
 
 type Props = {
   moduleDeps: ModuleDeps;
@@ -27,6 +28,7 @@ const ControlPanel: FC<Props> = ({ moduleDeps, filters, onSubmit }) => {
   const [sourceModules, setSourceModules] = useState<string[]>(
     filters.sourceModules,
   );
+  const [ignoredModules, setIgnoredModules] = useState<string[]>([]);
 
   const targetModulesValue = useMemo(
     () => targetModules.map(path => moduleDeps.modules[path]),
@@ -43,8 +45,15 @@ const ControlPanel: FC<Props> = ({ moduleDeps, filters, onSubmit }) => {
   const handleSourceModulesChange = (modules: Module[]) => {
     setSourceModules(modules.map(({ path }) => path));
   };
+  const handleIgnoredModulesChange = (modules: Module[]) => {
+    setIgnoredModules(modules.map(({ path }) => path));
+  };
   const handleSubmit = () => {
-    onSubmit?.({ targetModules: targetModules, sourceModules: sourceModules });
+    onSubmit?.({
+      targetModules: targetModules,
+      sourceModules: sourceModules,
+      ignoredModules: ignoredModules,
+    });
   };
 
   return (
@@ -70,6 +79,12 @@ const ControlPanel: FC<Props> = ({ moduleDeps, filters, onSubmit }) => {
                 label="Import source(s)"
                 value={sourceModulesValue}
                 onChange={handleSourceModulesChange}
+              />
+            </Grid>
+            <Grid item>
+              <IgnoreModules
+                modules={modules}
+                onChange={handleIgnoredModulesChange}
               />
             </Grid>
           </Grid>

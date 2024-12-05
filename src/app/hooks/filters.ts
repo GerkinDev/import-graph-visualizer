@@ -8,6 +8,7 @@ export function useFilters(): [
   const [searchFilters, setSearchFilters] = useState<Filters>({
     targetModules: [],
     sourceModules: [],
+    ignoredModules: [],
   });
 
   useEffect(() => {
@@ -19,6 +20,7 @@ export function useFilters(): [
       setSearchFilters({
         targetModules: searchParams.get('tgt')?.split(',') ?? [],
         sourceModules: searchParams.get('src')?.split(',') ?? [],
+        ignoredModules: [],
       });
     }
   }, []);
