@@ -10,7 +10,7 @@ import { DepGraph, Filters, ModuleDeps } from '../utils/types';
 type Props = {
   moduleDeps: ModuleDeps;
   filters: Filters;
-  physicsSimulation: boolean
+  physicsSimulation: boolean;
 };
 
 type Stage = 'idle' | 'computing' | 'drawing';
@@ -65,7 +65,7 @@ const DepGraph: FC<Props> = ({ moduleDeps, filters, physicsSimulation }) => {
         containerRef.current,
         { edges, nodes },
         {
-          physics: {enabled: physicsSimulation},
+          physics: { enabled: physicsSimulation },
           nodes: {
             shape: 'image',
             shapeProperties: {
@@ -92,18 +92,18 @@ const DepGraph: FC<Props> = ({ moduleDeps, filters, physicsSimulation }) => {
         setStage('idle');
       });
 
-      setNetwork(newNetwork)
+      setNetwork(newNetwork);
     }
   }, [containerRef.current, graph]);
 
   useEffect(() => {
-    if(physicsSimulation){
-      network?.startSimulation()
+    if (physicsSimulation) {
+      network?.startSimulation();
     } else {
-      network?.stopSimulation()
+      network?.stopSimulation();
     }
-    network?.setOptions({physics: {enabled: physicsSimulation}})
-  }, [physicsSimulation, network])
+    network?.setOptions({ physics: { enabled: physicsSimulation } });
+  }, [physicsSimulation, network]);
 
   const handleTerminate = () => {
     if (worker != null) {

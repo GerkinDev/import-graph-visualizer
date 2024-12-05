@@ -40,7 +40,11 @@ const App: FC = () => {
         physicsSimulation={physicsSimulation}
         setPhysicsSimulation={setPhysicsSimulation}
       />
-      <DepGraph moduleDeps={moduleDeps} filters={filters} physicsSimulation={physicsSimulation} />
+      <DepGraph
+        moduleDeps={moduleDeps}
+        filters={filters}
+        physicsSimulation={physicsSimulation}
+      />
     </>
   );
 };
