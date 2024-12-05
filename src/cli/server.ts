@@ -15,8 +15,8 @@ export function runStaticServer(): void {
   app.use('/assets', express.static(path.join(__dirname, '..', 'cli')));
 
   app.listen(PORT, () => {
-    open(url).then(() => {
-      spinner.succeed(`Opened browser at ${url}`);
-    });
+    // open(url).then(() => {
+    spinner.succeed(`Opened browser at ${url}`);
+    // });
   });
 }
