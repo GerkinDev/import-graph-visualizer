@@ -1,4 +1,10 @@
-import { Button, Snackbar, SnackbarContent } from '@material-ui/core';
+import {
+  Button,
+  Icon,
+  IconButton,
+  Snackbar,
+  SnackbarContent,
+} from '@material-ui/core';
 import React, { FC, useEffect, useRef, useState } from 'react';
 import { Edge, Network, Node } from 'vis-network/standalone';
 import { getIconUrlByName, getIconUrlForFilePath } from 'vscode-material-icons';
@@ -119,18 +125,55 @@ const DepGraph: FC<Props> = ({ moduleDeps, filters, physicsSimulation }) => {
     }
   };
 
+  const handleDownload = () => {
+    const canvas = containerRef.current?.querySelector('canvas');
+    console.log(canvas);
+    if (!canvas) {
+      return;
+    }
+    const pngContent = canvas.toDataURL('image/png');
+    const link = document.createElement('a');
+    link.download = 'graph.png';
+    link.href = pngContent;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   return (
     <>
       <div
-        ref={containerRef}
         style={{
           height: 'calc(100vh - 310px)',
           width: '100%',
           border: '1px dotted grey',
           borderRadius: 4,
           marginTop: 15,
+          position: 'relative',
         }}
-      ></div>
+      >
+        <IconButton
+          onClick={handleDownload}
+          aria-label='Download'
+          style={{
+            position: 'absolute',
+            right: 0,
+            top: 0,
+            zIndex: 1,
+          }}
+        >
+          <Icon fontSize="small" style={{ textAlign: 'center' }}>
+            <img
+              src={getIconUrlByName('folder-download', ICONS_URL)}
+              style={{ display: 'flex', height: 'inherit', width: 'inherit' }}
+            />
+          </Icon>
+        </IconButton>
+        <div
+          ref={containerRef}
+          style={{ position: 'absolute', top: 0, bottom: 0, left: 0, right: 0 }}
+        ></div>
+      </div>
       <Snackbar open={stage === 'computing'}>
         <SnackbarContent
           message="Calculating all import paths between target and source modules..."
