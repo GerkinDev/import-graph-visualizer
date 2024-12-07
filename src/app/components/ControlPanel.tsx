@@ -7,7 +7,7 @@ import {
   Container,
   Grid,
 } from '@material-ui/core';
-import React, { FC, useMemo, useState } from 'react';
+import React, { FC, useCallback, useMemo, useState } from 'react';
 import { getModules } from '../utils/deps';
 import { Filters, Module, ModuleDeps } from '../utils/types';
 import SelectModules from './SelectModules';
@@ -53,9 +53,12 @@ const ControlPanel: FC<Props> = ({
   const handleSourceModulesChange = (modules: Module[]) => {
     setSourceModules(modules.map(({ path }) => path));
   };
-  const handleIgnoredModulesChange = (modules: Module[]) => {
-    setIgnoredModules(modules.map(({ path }) => path));
-  };
+  const handleIgnoredModulesChange = useCallback(
+    (modules: Module[]) => {
+      setIgnoredModules(modules.map(({ path }) => path));
+    },
+    [setIgnoredModules, modules],
+  );
   const handleSubmit = () => {
     onSubmit?.({
       targetModules: targetModules,

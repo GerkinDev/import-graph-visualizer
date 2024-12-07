@@ -60,6 +60,7 @@
     "react-dom": "^17.0.1",
     "react-router-dom": "^5.2.0",
     "react-window": "^1.8.6",
+    "styled-components": "^6.1.13",
     "typescript": "^5.3.3",
     "vis-network": "^9.0.4",
     "vscode-material-icons": "^0.1.0",
