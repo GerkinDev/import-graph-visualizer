@@ -144,17 +144,19 @@ const DepGraph: FC<Props> = ({ moduleDeps, filters, physicsSimulation }) => {
     <>
       <div
         style={{
-          height: 'calc(100vh - 310px)',
+          flex: 1,
+          minHeight: '400px',
           width: '100%',
           border: '1px dotted grey',
           borderRadius: 4,
           marginTop: 15,
           position: 'relative',
+          boxSizing: 'border-box'
         }}
       >
         <IconButton
           onClick={handleDownload}
-          aria-label='Download'
+          aria-label="Download"
           style={{
             position: 'absolute',
             right: 0,
