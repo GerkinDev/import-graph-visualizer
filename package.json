@@ -11,14 +11,15 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "webpack serve --open --hot --mode development",
     "build": "npm run build:app && npm run build:cli",
-    "build:app": "webpack --mode development",
+    "build:app": "webpack --mode production",
     "build:cli": "tsc src/cli/main.ts --strict --esModuleInterop --outDir dist/cli",
     "format": "prettier .",
     "reporter": "npm run build:cli && node dist/cli/reporter.js",
     "release": "standard-version",
     "release:dry-run": "standard-version --dry-run",
-    "build:watch": "nodemon --ext .ts,.js,.tsx,.jsx,.html --watch src --exec 'NODE_ENV=production npm run build && npm run copy'",
-    "copy": "./copy.sh"
+    "build:local:watch": "nodemon --ext .ts,.js,.tsx,.jsx,.html --watch src --exec 'npm run build:local'",
+    "build:local": "npm run build && npm run build:local:copy",
+    "build:local:copy": "./copy.sh"
   },
   "repository": {
     "type": "git",

@@ -13,7 +13,7 @@ module.exports = {
   cache: {
     type: 'filesystem',
   },
-  devtool: 'cheap-source-map',
+  devtool: 'inline-source-map',
   module: {
     rules: [
       {
@@ -45,8 +45,8 @@ module.exports = {
         },
       ],
     }),
-    new webpack.DefinePlugin({
-      'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV),
-    }),
+    // new webpack.DefinePlugin({
+    //   'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV),
+    // }),
   ],
 };
