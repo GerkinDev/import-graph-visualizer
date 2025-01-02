@@ -3,6 +3,6 @@
 import { createReporterOutput } from './reporter';
 import { runStaticServer } from './server';
 
-createReporterOutput();
-
-runStaticServer();
+createReporterOutput().then(() => {
+    runStaticServer();
+})

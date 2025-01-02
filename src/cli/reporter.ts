@@ -1,11 +1,11 @@
-import { cruise, ICruiseOptions } from 'dependency-cruiser';
 import fs from 'fs';
 import ora from 'ora';
 import path from 'path';
 import typescript from 'typescript';
 import yargs from 'yargs';
 
-export function createReporterOutput(): void {
+export async function createReporterOutput() {
+    const {cruise} = await import('dependency-cruiser')
   const args = yargs
     .option('entry-points', {
       alias: 'e',
@@ -17,10 +17,24 @@ export function createReporterOutput(): void {
       alias: 't',
       demandOption: false,
       string: true,
+    })
+    .option('output-path', {
+      alias: 'o',
+      demandOption: false,
+      string: true,
+    })
+    .option('extensions', {
+      demandOption: false,
+      string: true,
+      array: true
     }).argv;
 
   const entryPoints = args['entry-points'];
   const tsConfigFileName = args['ts-config'];
+  const outputPath = args['output-path'];
+  const extensions = args['extensions']?.map((ext: string) => ext.split(',')).flat();
+
+  console.dir({entryPoints, tsConfigFileName, outputPath, extensions})
 
   const tsConfig =
     tsConfigFileName == null
@@ -34,31 +48,28 @@ export function createReporterOutput(): void {
           tsConfigFileName,
         );
 
-  const options: ICruiseOptions = {
-    doNotFollow: {
-      path: 'node_modules',
-      dependencyTypes: [
-        'npm',
-        'npm-dev',
-        'npm-optional',
-        'npm-peer',
-        'npm-bundled',
-        'npm-no-pkg',
-      ],
-    },
-    tsPreCompilationDeps: true,
-  };
-
   const cruiseSpinner = ora('Analyzing project imports').start();
-  const { output } = cruise(
+  const { output } = await cruise(
     entryPoints,
     {
-      ruleSet: {
-        options: { ...options, tsConfig: { fileName: tsConfigFileName } },
+        doNotFollow: {
+          path: 'node_modules',
+          dependencyTypes: [
+            'npm',
+            'npm-dev',
+            'npm-optional',
+            'npm-peer',
+            'npm-bundled',
+            'npm-no-pkg',
+          ],
+        },
+        tsPreCompilationDeps: true,
+        enhancedResolveOptions: {
+            extensions
+        },
       },
-    } as any,
-    null,
-    tsConfig,
+    undefined,
+    {tsConfig},
   );
   cruiseSpinner.succeed('Analyzed project imports');
 
@@ -67,6 +78,9 @@ export function createReporterOutput(): void {
     path.resolve(__dirname, 'reporter-output.json'),
     JSON.stringify(output),
   );
+  if(outputPath){
+    fs.copyFileSync(path.resolve(__dirname, 'reporter-output.json'), outputPath);
+  }
   fsSpinner.succeed('Created dependency graph');
 }
 
